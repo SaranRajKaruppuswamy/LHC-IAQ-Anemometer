@@ -14,6 +14,9 @@ const int chipSelect = 4;
 float sum = 0;
 int v =0; 
 float avg = 0;
+float sum2 = 0;
+int v2 =0; 
+float avg2 = 0;
  void setup()
 {
    Serial.begin(9600);
@@ -28,15 +31,7 @@ float avg = 0;
     while (1) delay(10);
   }
 
-  if (! rtc.isrunning()) {
-    Serial.println("RTC is NOT running, let's set the time!");
-    // When time needs to be set on a new device, or after a power loss, the
-    // following line sets the RTC to the date & time this sketch was compiled
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
-    // This line sets the RTC with an explicit date & time, for example to set
-    // January 21, 2014 at 3am you would call:
-    // rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));
-  }
+  
   //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
   Serial.print("Initializing SD card...");
 
@@ -55,6 +50,11 @@ float velocity;
 int analogin = analogRead(A0);
 float voltage = analogin * (5.0 / 1023.0);
 velocity=(((voltage-0)/(5-0))*50);
+
+float velocity2;
+int analogin2 = analogRead(A1);
+float voltage2 = analogin2 * (5.0 / 1023.0);
+velocity2=(((voltage2-0)/(5-0))*50);
 
  Serial.print("   velocity:");
  Serial.println(velocity);
@@ -86,12 +86,22 @@ unsigned long currentMillis = millis();
     Serial.print(now.second(), DEC);
     Serial.println();
       avg = sum/v;
+       avg2 = sum2/v2;
    String dataString = "";
+   
    
  
    dataString += String(now.day(), DEC) + "/" +String(now.month(), DEC) +  "/" + String(now.year(), DEC)  + " , " + String(now.hour(), DEC) + ":" +  String(now.minute(), DEC)+ ":" + String(now.second(), DEC);
    dataString += " , ";
    dataString += String(avg);
+   dataString += " , ";
+   dataString += String(avg2);
+   avg=0;
+   sum=0;
+   v=0;
+   avg2=0;
+   sum2=0;
+   v2=0;
    File dataFile = SD.open("AirLOGvc.txt", FILE_WRITE);
    delay(500);
   // if the file is available, write to it:
@@ -114,5 +124,7 @@ unsigned long currentMillis = millis();
  else {
    sum = velocity+sum;
    v++;
+    sum2 = velocity+sum2;
+   v2++;
   }
  }
